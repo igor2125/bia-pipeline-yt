@@ -1,22 +1,29 @@
 FROM node:21-slim
 
+# Atualiza o npm
 RUN npm install -g npm@latest --loglevel=error
+
+# Define diretório de trabalho
 WORKDIR /usr/src/app
 
+# Copia os arquivos do backend
 COPY package*.json ./
+COPY server.js ./
 
+# Instala dependências do backend
 RUN npm install --loglevel=error
 
-COPY . .
+# Copia o frontend
+COPY client ./client
 
-RUN REACT_APP_API_URL=http://localhost:3001 SKIP_PREFLIGHT_CHECK=true npm run build --prefix client
+# Instala dependências do frontend e builda o React
+RUN cd client && npm install --loglevel=error && npm run build
 
-RUN mv client/build build
+# Move o build do React para uma pasta acessível
+RUN mv client/build ./frontend-build
 
-RUN rm  -rf client/*
-
-RUN mv build client/
-
+# Exponha a porta do backend (ajuste se for diferente)
 EXPOSE 8080
 
-CMD [ "npm", "start" ]
+# Inicia o backend
+CMD ["npm", "start"]
