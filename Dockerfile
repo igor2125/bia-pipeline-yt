@@ -1,9 +1,6 @@
-FROM public.ecr.aws/docker/library/node:22-slim
-RUN npm install -g npm@11 --loglevel=error
+FROM node:21-slim
 
-#Instalando o curl
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
+RUN npm install -g npm@latest --loglevel=error
 WORKDIR /usr/src/app
 
 COPY package*.json ./
